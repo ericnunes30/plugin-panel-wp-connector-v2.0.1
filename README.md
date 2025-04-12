@@ -160,6 +160,23 @@ panel-wp-connector/
 - API REST do WordPress ativada
 - Credenciais de administrador para instalação
 
+## Compatibilidade com Panel WP 2.0.0
+
+Este plugin foi otimizado para funcionar com a nova versão do Panel WP 2.0.0, que utiliza uma stack tecnológica moderna:
+
+- **Backend**: AdonisJS 6 (substituição do Express)
+  - Framework MVC completo para Node.js
+  - Sistema de autenticação robusto
+  - ORM integrado para manipulação de banco de dados
+  - Melhor estruturação de código e organização
+
+- **Frontend**: React com arquitetura moderna
+  - Interface de usuário mais intuitiva e responsiva
+  - Gerenciamento de estado otimizado
+  - Sistema de temas claro/escuro
+  - Melhor organização de componentes e estrutura de código
+  - Funcionalidades avançadas como pesquisa e filtragem de sites
+
 ## Instalação
 1. Faça o upload da pasta `panel-wp-connector` para o diretório `/wp-content/plugins/`
 2. Ative o plugin no painel de administração do WordPress
@@ -185,11 +202,13 @@ panel-wp-connector/
 - Melhorada a coleta de informações do sistema
 - Corrigido o endpoint de limpeza de log de depuração
 - Adicionada versão do PHP na resposta do endpoint de status
+- Otimizado para integração com o Panel WP 2.0.0
 
 ### 2.0.0
 - Reformulação completa do plugin
 - Melhorias de segurança e desempenho
 - Novos endpoints para gerenciamento de depuração
+- Compatibilidade com a nova stack tecnológica do Panel WP (AdonisJS 6 e React)
 
 ### 1.3.0
 - Versão anterior do plugin
