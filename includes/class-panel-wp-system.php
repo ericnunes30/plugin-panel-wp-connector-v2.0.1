@@ -29,7 +29,7 @@ class PanelWPSystem {
             return $informacoes;
         } catch (\Exception $e) {
             error_log('PANEL WP: Erro ao coletar informações do sistema - ' . $e->getMessage());
-            
+
             return [
                 'erro' => true,
                 'mensagem' => __('Falha ao coletar informações do sistema', 'panel-wp-connector')
@@ -83,7 +83,9 @@ class PanelWPSystem {
     private function obter_informacoes_servidor() {
         return [
             'so' => php_uname('s') . ' ' . php_uname('r'),
-            'arquitetura' => php_uname('m')
+            'arquitetura' => php_uname('m'),
+            'servidor_web' => isset($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : 'Desconhecido',
+            'ip_servidor' => isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : 'Desconhecido'
         ];
     }
 
@@ -94,7 +96,7 @@ class PanelWPSystem {
     private function calcular_tamanho_banco_dados() {
         global $wpdb;
         $total_size = 0;
-        
+
         try {
             $tables = $wpdb->get_results('SHOW TABLE STATUS', ARRAY_A);
             foreach ($tables as $table) {

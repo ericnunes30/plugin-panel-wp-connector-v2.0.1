@@ -33,12 +33,12 @@ class PanelWPCore {
             $this->define_hooks();
         } catch (\Exception $e) {
             error_log('PANEL WP: Erro ao inicializar núcleo - ' . $e->getMessage());
-            
+
             // Notificar admin sobre erro crítico
             add_action('admin_notices', function() use ($e) {
-                echo '<div class="notice notice-error"><p>' . 
-                     sprintf(__('Erro crítico no Plugin Panel WP Connector: %s', 'panel-wp-connector'), 
-                             $e->getMessage()) . 
+                echo '<div class="notice notice-error"><p>' .
+                     sprintf(__('Erro crítico no Plugin Panel WP Connector: %s', 'panel-wp-connector'),
+                             $e->getMessage()) .
                      '</p></div>';
             });
         }
@@ -57,11 +57,11 @@ class PanelWPCore {
 
         foreach ($arquivos_dependencias as $tipo => $arquivo) {
             $caminho_completo = PANEL_WP_CONNECTOR_PATH . $arquivo;
-            
+
             if (!file_exists($caminho_completo)) {
                 throw new \Exception(sprintf('Arquivo de dependência não encontrado: %s', $arquivo));
             }
-            
+
             require_once $caminho_completo;
         }
 
@@ -116,6 +116,7 @@ class PanelWPCore {
 
         $status = [
             'wordpress_version' => get_bloginfo('version'),
+            'php_version' => PHP_VERSION,
             'site_url' => get_site_url(),
             'admin_email' => get_bloginfo('admin_email'),
             'active_plugins' => array_keys(\get_plugins()),
@@ -135,7 +136,7 @@ class PanelWPCore {
             return rest_ensure_response($informacoes);
         } catch (\Exception $e) {
             error_log('PANEL WP: Erro ao coletar informações do sistema - ' . $e->getMessage());
-            
+
             return rest_ensure_response([
                 'error' => true,
                 'message' => __('Falha ao coletar informações do sistema', 'panel-wp-connector')

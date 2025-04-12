@@ -6,7 +6,7 @@ use PanelWPConnector\Core\PanelWPCore;
 /**
  * Classe responsável pela autenticação e gerenciamento de chaves API
  * Fornece métodos para geração, validação e gerenciamento de chaves de API
- * 
+ *
  * @package PanelWPConnector\Authentication
  * @since 0.3.0
  */
@@ -35,7 +35,7 @@ class PanelWPAuthentication {
     /**
      * Gera uma chave de API temporária
      * Cria uma chave única para uso temporário
-     * 
+     *
      * @return array Detalhes da chave gerada
      */
     public function gerar_chave_api_temporaria() {
@@ -65,7 +65,7 @@ class PanelWPAuthentication {
             ];
         } catch (\Exception $e) {
             error_log('PANEL WP: Erro ao gerar chave API - ' . $e->getMessage());
-            
+
             return [
                 'success' => false,
                 'message' => __('Erro ao gerar chave API temporária.', 'panel-wp-connector')
@@ -76,7 +76,7 @@ class PanelWPAuthentication {
     /**
      * Gera chave única para API
      * Cria uma chave segura e aleatória
-     * 
+     *
      * @return string Chave API gerada
      */
     private function gerar_chave_unica() {
@@ -87,7 +87,7 @@ class PanelWPAuthentication {
     /**
      * Salva a chave de API temporária para um usuário específico
      * Associa a chave gerada a um usuário do WordPress
-     * 
+     *
      * @param int $user_id ID do usuário
      * @return array Resultado do salvamento
      */
@@ -120,7 +120,7 @@ class PanelWPAuthentication {
             return $resultado;
         } catch (\Exception $e) {
             error_log('PANEL WP: Erro ao salvar chave API - ' . $e->getMessage());
-            
+
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -130,7 +130,7 @@ class PanelWPAuthentication {
 
     /**
      * Salva chave no banco de dados
-     * 
+     *
      * @param array $dados_chave Dados da chave API
      * @return array Resultado da operação
      */
@@ -138,7 +138,7 @@ class PanelWPAuthentication {
         $tabela = $this->wpdb->prefix . 'panel_wp_api_keys';
 
         $resultado = $this->wpdb->insert(
-            $tabela, 
+            $tabela,
             [
                 'user_id' => $dados_chave['user_id'],
                 'api_key' => $dados_chave['api_key'],
@@ -159,7 +159,7 @@ class PanelWPAuthentication {
 
     /**
      * Define manualmente a chave temporária
-     * 
+     *
      * @param string $chave_api Chave API a ser definida
      */
     public function set_chave_temporaria($chave_api) {
@@ -172,7 +172,7 @@ class PanelWPAuthentication {
 
     /**
      * Limpa a chave temporária armazenada na sessão
-     * 
+     *
      * @return bool True se a chave foi limpa com sucesso
      */
     public function limpar_chave_temporaria() {
@@ -188,14 +188,14 @@ class PanelWPAuthentication {
 
     /**
      * Valida uma chave de API
-     * 
+     *
      * @param string $api_key Chave de API para validar
      * @return int|false ID do usuário se válido, false caso contrário
      */
     public function validar_chave_api($api_key) {
         $user_id = $this->wpdb->get_var(
             $this->wpdb->prepare(
-                "SELECT user_id FROM {$this->wpdb->prefix}panel_wp_api_keys WHERE api_key = %s", 
+                "SELECT user_id FROM {$this->wpdb->prefix}panel_wp_api_keys WHERE api_key = %s",
                 $api_key
             )
         );
@@ -214,20 +214,20 @@ class PanelWPAuthentication {
 
     /**
      * Revoga uma chave de API
-     * 
+     *
      * @param string $api_key Chave de API para revogar
      * @return bool Sucesso na revogação
      */
     public function revogar_chave_api($api_key) {
         return (bool) $this->wpdb->delete(
-            $this->wpdb->prefix . 'panel_wp_api_keys', 
+            $this->wpdb->prefix . 'panel_wp_api_keys',
             ['api_key' => $api_key]
         );
     }
 
     /**
      * Listar chaves de API de um usuário
-     * 
+     *
      * @param int $user_id ID do usuário
      * @return array Chaves de API do usuário
      */
@@ -245,7 +245,7 @@ class PanelWPAuthentication {
             // Buscar chaves do usuário
             $chaves = $this->wpdb->get_results(
                 $this->wpdb->prepare(
-                    "SELECT api_key, created_at, last_used FROM {$table_name} WHERE user_id = %d", 
+                    "SELECT api_key, created_at, last_used FROM {$table_name} WHERE user_id = %d",
                     $user_id
                 ),
                 ARRAY_A
@@ -266,14 +266,14 @@ class PanelWPAuthentication {
 
     /**
      * Verifica permissão de API para rotas REST
-     * 
+     *
      * @param \WP_REST_Request $request Objeto de requisição REST
      * @return bool Indica se a requisição tem permissão
      */
     public function verificar_permissao_api($request) {
-        // Obter chave de API do cabeçalho
-        $api_key = $request->get_header('X-Api-Key');
-        
+        // Obter chave de API do cabeçalho ou como parâmetro
+        $api_key = $request->get_header('X-Api-Key') ?? $request->get_param('api_key');
+
         if (empty($api_key)) {
             error_log('PANEL WP: Chave API não fornecida');
             return false;
@@ -281,7 +281,7 @@ class PanelWPAuthentication {
 
         // Verificar validade da chave
         $chave_valida = $this->validar_chave_api($api_key);
-        
+
         if (!$chave_valida) {
             error_log('PANEL WP: Chave API inválida');
             return false;
@@ -292,14 +292,14 @@ class PanelWPAuthentication {
 
     /**
      * Valida uma chave de API
-     * 
+     *
      * @param string $api_key Chave API para validação
      * @return bool Indica se a chave é válida
      */
     private function validar_chave_api_interna($api_key) {
         // Implementar lógica de validação da chave
         // Pode ser comparação com banco de dados, verificação de expiração, etc.
-        
+
         // Exemplo simplificado - substituir por lógica real de validação
         $chaves_validas = [
             'K7xV1hzdvtL9oSzK8ogrAas9q9ben5C7' // Chave de exemplo

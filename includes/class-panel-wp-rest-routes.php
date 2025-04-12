@@ -168,8 +168,8 @@ class PanelWPRestRoutes {
             return true;
         }
 
-        // Verificar chave API
-        $api_key = $request->get_header('X-API-KEY');
+        // Verificar chave API (no cabeçalho ou como parâmetro)
+        $api_key = $request->get_header('X-API-KEY') ?? $request->get_param('api_key');
         if (!$api_key) {
             return false;
         }
@@ -194,7 +194,7 @@ class PanelWPRestRoutes {
      * @return bool Indica se a chave de API é válida
      */
     public function validar_chave_api(WP_REST_Request $request) {
-        $api_key = $request->get_header('X-API-KEY');
+        $api_key = $request->get_header('X-API-KEY') ?? $request->get_param('api_key');
 
         if (!$api_key) {
             return new WP_Error(
@@ -297,6 +297,7 @@ class PanelWPRestRoutes {
         return new WP_REST_Response([
             'status' => 'online',
             'wordpress_version' => get_bloginfo('version'),
+            'php_version' => PHP_VERSION,
             'site_url' => get_site_url(),
             'site_name' => get_bloginfo('name'),
             'timezone' => wp_timezone_string()
@@ -332,39 +333,17 @@ class PanelWPRestRoutes {
      * @return WP_REST_Response Informações do sistema
      */
     public function obter_informacoes_sistema() {
-        return new WP_REST_Response([
-            'wordpress_version' => get_bloginfo('version'),
-            'php_version' => PHP_VERSION,
-            'mysql_version' => $this->obter_versao_mysql(),
-            'site_url' => get_site_url(),
-            'site_name' => get_bloginfo('name'),
-            'plugins_ativos' => $this->listar_plugins_ativos(),
-            'tema_atual' => wp_get_theme()->get('Name')
-        ], 200);
-    }
+        $system = new \PanelWPConnector\System\PanelWPSystem();
+        $informacoes = $system->coletar_informacoes_sistema();
 
-    /**
-     * Obtém a versão do MySQL
-     *
-     * @return string Versão do MySQL
-     */
-    private function obter_versao_mysql() {
-        global $wpdb;
-        return $wpdb->get_var("SELECT VERSION()");
-    }
+        // Adicionar informações em formato simplificado para compatibilidade
+        $informacoes['wordpress_version'] = $informacoes['wordpress']['versao'];
+        $informacoes['php_version'] = $informacoes['php']['versao'];
+        $informacoes['mysql_version'] = $informacoes['banco_dados']['versao'];
+        $informacoes['site_url'] = $informacoes['wordpress']['url'];
+        $informacoes['site_name'] = get_bloginfo('name');
 
-    /**
-     * Lista plugins ativos
-     *
-     * @return array Lista de plugins ativos
-     */
-    private function listar_plugins_ativos() {
-        $plugins = get_plugins();
-        $ativos = get_option('active_plugins');
-
-        return array_map(function($plugin_path) use ($plugins) {
-            return $plugins[$plugin_path]['Name'];
-        }, $ativos);
+        return new WP_REST_Response($informacoes, 200);
     }
 
     /**
@@ -388,8 +367,8 @@ class PanelWPRestRoutes {
         $params = $request->get_json_params();
         $ativar = isset($params['ativar']) ? (bool) $params['ativar'] : false;
 
-        // Obter o ID do usuário pela chave API
-        $api_key = $request->get_header('X-API-KEY');
+        // Obter o ID do usuário pela chave API (no cabeçalho ou como parâmetro)
+        $api_key = $request->get_header('X-API-KEY') ?? $request->get_param('api_key');
         $user_id = $this->authentication->validar_chave_api($api_key);
 
         $resultado = $debug->toggle_debug($ativar, $user_id);
@@ -404,8 +383,8 @@ class PanelWPRestRoutes {
     public function obter_log_debug($request) {
         $debug = new \PanelWPConnector\Debug\PanelWPDebug();
 
-        // Obter o ID do usuário pela chave API
-        $api_key = $request->get_header('X-API-KEY');
+        // Obter o ID do usuário pela chave API (no cabeçalho ou como parâmetro)
+        $api_key = $request->get_header('X-API-KEY') ?? $request->get_param('api_key');
         $user_id = $this->authentication->validar_chave_api($api_key);
 
         $conteudo = $debug->get_debug_log_content($user_id);
@@ -420,8 +399,8 @@ class PanelWPRestRoutes {
     public function limpar_log_debug($request) {
         $debug = new \PanelWPConnector\Debug\PanelWPDebug();
 
-        // Obter o ID do usuário pela chave API
-        $api_key = $request->get_header('X-API-KEY');
+        // Obter o ID do usuário pela chave API (no cabeçalho ou como parâmetro)
+        $api_key = $request->get_header('X-API-KEY') ?? $request->get_param('api_key');
         $user_id = $this->authentication->validar_chave_api($api_key);
 
         $resultado = $debug->clear_debug_log($user_id);

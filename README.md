@@ -4,9 +4,9 @@
 O Panel WP Connector é um plugin avançado para WordPress que fornece uma ponte segura entre sites WordPress e sistemas centrais de automação e gerenciamento. Projetado para administradores de múltiplos sites WordPress, ele oferece uma API robusta para monitoramento, execução de tarefas, gerenciamento de arquivos e backup.
 
 ## Versão Atual
-**Versão:** 1.3.0  
-**Autor:** Eric Nunes  
-**Repositório:** [GitHub](https://github.com/eric-nunes/panel-wp-connector)
+**Versão:** 2.0.1
+**Autor:** Eric Nunes
+**Repositório:** [GitHub](https://github.com/ericnunes30/plugin-panel-wp-connector-v2.0.1)
 
 ## Funcionalidades Principais
 
@@ -177,6 +177,22 @@ panel-wp-connector/
 - Falhas de autenticação: Confirme a validade da chave API
 - Erros de permissão: Verifique as permissões de escrita nos diretórios necessários
 - Ative o modo de debug para registros detalhados de operações
+
+## Changelog
+
+### 2.0.1
+- Adicionado suporte para chave API via parâmetro de URL além do cabeçalho
+- Melhorada a coleta de informações do sistema
+- Corrigido o endpoint de limpeza de log de depuração
+- Adicionada versão do PHP na resposta do endpoint de status
+
+### 2.0.0
+- Reformulação completa do plugin
+- Melhorias de segurança e desempenho
+- Novos endpoints para gerenciamento de depuração
+
+### 1.3.0
+- Versão anterior do plugin
 
 ## Contribuição
 Contribuições são bem-vindas para melhorar o Plugin Panel WP Connector. Por favor, siga estas diretrizes:

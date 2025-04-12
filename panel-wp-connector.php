@@ -1,16 +1,16 @@
 <?php
 /**
  * Plugin Name: Panel WP Connector
- * Plugin URI: https://github.com/eric-nunes/panel-wp-connector
- * Description: Conecta o site WordPress ao sistema central de automação
- * Version: 1.3.0
+ * Plugin URI: https://github.com/ericnunes30/plugin-panel-wp-connector-v2.0.1
+ * Description: Conecta o site WordPress ao Panel WP - Gerenciador Multi-site WordPress
+ * Version: 2.0.1
  * Author: Eric Nunes
- * Author URL: https://github.com/eric-nunes
+ * Author URL: https://github.com/ericnunes30
  * Text Domain: panel-wp-connector
  * Domain Path: /languages
  * Requires at least: 5.8
  * Requires PHP: 7.4
- * 
+ *
  * @package PanelWPConnector
  */
 
@@ -56,7 +56,7 @@ spl_autoload_register(function($class) {
 
     // Converter namespace para caminho de arquivo
     $relative_class = substr($class, $len);
-    
+
     // Tentar múltiplos formatos de nome de arquivo
     $possible_files = [
         $base_dir . 'class-' . strtolower(str_replace(['_', '\\'], ['-', '/'], $relative_class)) . '.php',
@@ -120,7 +120,7 @@ function panel_wp_connector_activate() {
     } catch (Exception $e) {
         // Desativar plugin em caso de erro
         deactivate_plugins(plugin_basename(__FILE__));
-        
+
         // Notificar admin sobre erro
         wp_die(
             $e->getMessage(),
@@ -140,7 +140,7 @@ function panel_wp_connector_deactivate() {
     try {
         // Limpar configurações e logs, se necessário
         delete_option('panel_wp_connector_options');
-        
+
         // Log de desativação
         error_log('PANEL WP: Plugin desativado');
     } catch (Exception $e) {
@@ -217,7 +217,7 @@ function panel_wp_connector_log_auto_updates($update_results) {
     try {
         if (!empty($update_results['plugin'])) {
             foreach ($update_results['plugin'] as $resultado) {
-                error_log('PANEL WP: Atualização ' . ($resultado->result ? 'bem-sucedida' : 'falhou') . 
+                error_log('PANEL WP: Atualização ' . ($resultado->result ? 'bem-sucedida' : 'falhou') .
                           ' para plugin ' . $resultado->plugin);
             }
         }
@@ -237,7 +237,7 @@ function panel_wp_connector_settings_link($links) {
     try {
         $url_configuracoes = admin_url('admin.php?page=panel-wp-connector');
         $links_configuracao = [
-            'configuracoes' => '<a href="' . $url_configuracoes . '">' . 
+            'configuracoes' => '<a href="' . $url_configuracoes . '">' .
                                __('Configurações', 'panel-wp-connector') . '</a>'
         ];
         return array_merge($links_configuracao, $links);
